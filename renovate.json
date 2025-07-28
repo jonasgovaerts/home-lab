@@ -1,6 +1,6 @@
 {
   "extends": ["config:base"],
-  "enabledManagers": ["regex","helm"],
+  "enabledManagers": ["regex"],
   "regexManagers": [
     {
       "description": "Update Helm chart versions in Flux HelmRelease",
