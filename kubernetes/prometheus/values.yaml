@@ -15,7 +15,7 @@ data:
         enabled: true
         pathType: ImplementationSpecific
         hosts:
-          - prometheus.local
+          - prometheus.jonasg.be
         tls: []
     
       # prometheusSpec:
