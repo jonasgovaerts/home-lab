@@ -52,13 +52,12 @@ data:
       service:
         type: ClusterIP
         port: 80
-      # ingress:
-      #   enabled: true
-      #   annotations:
-      #     kubernetes.io/ingress.class: nginx
-        hosts:
-          - grafana.local
-        tls: []
+        ingress:
+          enabled: true
+          pathType: ImplementationSpecific
+          hosts:
+            - grafana.jonasg.be
+          tls: []
     
       # Enable persistence for Grafana dashboards
       # persistence:
