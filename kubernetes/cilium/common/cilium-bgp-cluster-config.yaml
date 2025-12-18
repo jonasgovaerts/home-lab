@@ -14,4 +14,4 @@ spec:
           peerAddress: "10.0.1.1"
           peerASN: 64512
           peerConfigRef:
-            name: standard-peer-config
+            name: udm-pro

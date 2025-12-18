@@ -1,0 +1,12 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "ip-ppool-bgp-dev"
+spec:
+  allowFirstLastIPs: "No"
+  blocks:
+    - cidr: "10.0.4.0/24"
+  serviceSelector:
+    matchLabels:
+      service.kubernetes.io/cilium-adverstised-bgp: "true"
+      env: "dev"

@@ -1,7 +1,7 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumBGPPeerConfig
 metadata:
-  name: standard-peer-config
+  name: udm-pro
 spec:
   ebgpMultihop: 1
   timers:

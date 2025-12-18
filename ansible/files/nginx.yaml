@@ -37,6 +37,7 @@ metadata:
   labels:
     app: nginx
     service.kubernetes.io/cilium-adverstised-bgp: "true"
+    env: "prd"
 spec:
   type: LoadBalancer
   ports:

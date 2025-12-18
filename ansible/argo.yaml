@@ -1,0 +1,28 @@
+---
+- name: Install ArgoCD
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Create argocd namespace
+      kubernetes.core.k8s:
+        name: argocd
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Add ArgoCD Helm repository
+      kubernetes.core.helm_repository:
+        name: argocd
+        repo_url: https://argoproj.github.io/argo-helm
+        state: present
+
+    - name: Install ArgoCD Helm chart
+      kubernetes.core.helm:
+        name: argocd
+        chart_ref: argocd/argo-cd
+        release_namespace: argocd
+        create_namespace: true
+        values:
+          server:
+            service:
+              type: LoadBalancer

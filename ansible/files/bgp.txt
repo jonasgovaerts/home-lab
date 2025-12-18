@@ -1,33 +1,31 @@
-! UDM doesn't accept ip prefix list config so might want to run it manually
-! conf t
-! ip prefix-list K8S-LB seq 10 permit 10.0.2.0/24 le 32
-! exit
-!
-ip prefix-list K8S-LB seq 10 permit 10.0.2.0/24 le 32
-!
 router bgp 64512
  bgp router-id 10.0.1.1
  bgp log-neighbor-changes
+
  neighbor 10.0.1.11 remote-as 64513
- neighbor 10.0.1.11 description kubevip-master-1
  neighbor 10.0.1.12 remote-as 64520
- neighbor 10.0.1.12 description cilium-worker-1
  neighbor 10.0.1.13 remote-as 64520
- neighbor 10.0.1.13 description cilium-worker-2
  neighbor 10.0.1.14 remote-as 64520
- neighbor 10.0.1.14 description cilium-worker-3
  neighbor 10.0.1.15 remote-as 64520
- neighbor 10.0.1.15 description cilium-worker-4
- !
+
  address-family ipv4 unicast
+  neighbor 10.0.1.11 activate
+  neighbor 10.0.1.12 activate
+  neighbor 10.0.1.13 activate
+  neighbor 10.0.1.14 activate
+  neighbor 10.0.1.15 activate
+
+  neighbor 10.0.1.11 route-map K8S-IN in
   neighbor 10.0.1.12 route-map K8S-IN in
   neighbor 10.0.1.13 route-map K8S-IN in
   neighbor 10.0.1.14 route-map K8S-IN in
   neighbor 10.0.1.15 route-map K8S-IN in
  exit-address-family
 exit
-!
+
 route-map K8S-IN permit 10
  match ip address prefix-list K8S-LB
-exit
-!
+
+ip prefix-list K8S-LB seq 10 permit 10.0.2.0/24 le 32
+ip prefix-list K8S-LB seq 20 permit 10.0.3.0/24 le 32
+ip prefix-list K8S-LB seq 30 permit 10.0.4.0/24 le 32
