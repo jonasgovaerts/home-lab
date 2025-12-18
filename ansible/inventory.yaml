@@ -1,0 +1,23 @@
+all:
+  vars:
+    ansible_user: kubernetes
+  children:
+    masters:
+      hosts:
+        master-1:
+          ansible_host: master-1.homelab.jonasg.be
+          ansible_ip: 10.0.1.11
+    workers:
+      hosts:
+        worker-1:
+          ansible_host: worker-1.homelab.jonasg.be
+          ansible_ip: 10.0.1.12
+        worker-2:
+          ansible_host: worker-2.homelab.jonasg.be
+          ansible_ip: 10.0.1.13
+        worker-3:
+          ansible_host: worker-3.homelab.jonasg.be
+          ansible_ip: 10.0.1.14
+        worker-4:
+          ansible_host: worker-4.homelab.jonasg.be
+          ansible_ip: 10.0.1.15

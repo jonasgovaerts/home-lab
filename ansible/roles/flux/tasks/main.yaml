@@ -1,4 +1,0 @@
-- name: Install flux
-  kubernetes.core.k8s:
-    state: present
-    src: "https://github.com/fluxcd/flux2/releases/latest/download/install.yaml"
