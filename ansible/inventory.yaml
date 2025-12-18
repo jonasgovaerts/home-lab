@@ -1,6 +1,9 @@
 all:
   vars:
     ansible_user: kubernetes
+  hosts:
+    localhost:
+      ansible_connection: local
   children:
     masters:
       hosts:

@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumBGPAdvertisement
+metadata:
+  name: bgp-advertisement
+  labels:
+    bgp.cilium.io/advertise: "bgp"
+spec:
+  advertisements:
+  - advertisementType: "Service"
+    service:
+      addresses:
+      - LoadBalancerIP
+    selector:
+      matchLabels:
+        service.kubernetes.io/cilium-adverstised-bgp: "true"

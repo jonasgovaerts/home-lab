@@ -1,0 +1,26 @@
+- name: Add workers to cluster
+  hosts: workers
+  become: true
+  tasks:
+    - name: Get join command
+      ansible.builtin.command: kubeadm token create --print-join-command
+      register: join_cmd
+      delegate_to: "{{ groups['masters'][0] }}"
+      run_once: true
+
+    - name: Save join command
+      ansible.builtin.set_fact:
+        kube_join_command: "{{ join_cmd.stdout }}"
+      delegate_to: "{{ groups['masters'][0] }}"
+      run_once: true
+
+    - name: Join worker to the cluster
+      ansible.builtin.command: "{{ kube_join_command }}"
+      args:
+        creates: /etc/kubernetes/kubelet.conf
+
+    - name: Set node role to worker
+      become: false
+      ansible.builtin.command: >
+        kubectl label node {{ ansible_hostname }} node-role.kubernetes.io/worker=worker
+      delegate_to: localhost
