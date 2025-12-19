@@ -1,0 +1,25 @@
+---
+- name: Check cilium bgp peers
+  hosts: masters[0]
+  become: true
+  tasks:
+    - name: Check if cilium peers are configured
+      command: cilium bgp peers
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+      register: cilium_bgp_peers
+      changed_when: false
+    
+    - name: Check if cilium routers are configured
+      command: cilium bgp routes
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+      register: cilium_bgp_routes
+      changed_when: false
+    
+    - name: Display cilium bgp peers
+      ansible.builtin.debug:
+        var: "{{ item }}"
+      with_items:
+        - cilium_bgp_peers
+        - cilium_bgp_routes

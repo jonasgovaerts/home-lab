@@ -1,0 +1,59 @@
+---
+- name: Prepare all nodes for Kubernetes upgrade
+  hosts: masters,workers
+  become: true
+  tasks:
+    - name: Set kubernetes version variable for APT
+      ansible.builtin.set_fact:
+        kubernetes_version_apt: "{{ kubernetes_version | regex_replace('^(\\d+\\.\\d+)\\..*$', '\\1') }}"
+
+    - name: Add Kubernetes APT key
+      # noqa command-instead-of-module risky-shell-pipe
+      ansible.builtin.shell: |
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version_apt }}/deb/Release.key \
+        | gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      changed_when: false
+
+    - name: Add Kubernetes repo
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/kubernetes.list
+        content: |
+          deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version_apt }}/deb/ /
+        mode: '0644'
+
+    - name: Install Kubernetes components
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - kubelet={{ kubernetes_version }}-*
+          - kubeadm={{ kubernetes_version }}-*
+          - kubectl={{ kubernetes_version }}-*
+        state: present
+        allow_downgrade: true
+
+- name: Upgrade Control Plane Nodes
+  hosts: masters
+  become: true
+  tasks:
+    - name: Upgrade kubeadm
+      ansible.builtin.shell: |
+        kubeadm upgrade apply v{{ kubernetes_version }} -y
+
+- name: Upgrade worker Nodes
+  hosts: workers
+  serial: 1
+  tasks:
+    - name: Drain node
+      ansible.builtin.shell: |
+        kubectl drain {{ inventory_hostname }} --ignore-daemonsets --delete-emptydir-data
+      delegate_to: localhost
+    
+    - name: Updated with kubeadm upgrade node
+      become: true
+      ansible.builtin.shell: |
+        kubeadm upgrade node
+
+    - name: Uncordon node
+      ansible.builtin.shell: |
+        kubectl uncordon {{ inventory_hostname }}
+      delegate_to: localhost

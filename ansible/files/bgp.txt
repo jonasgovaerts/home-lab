@@ -26,6 +26,7 @@ exit
 route-map K8S-IN permit 10
  match ip address prefix-list K8S-LB
 
-ip prefix-list K8S-LB seq 10 permit 10.0.2.0/24 le 32
-ip prefix-list K8S-LB seq 20 permit 10.0.3.0/24 le 32
-ip prefix-list K8S-LB seq 30 permit 10.0.4.0/24 le 32
+ip prefix-list K8S-LB seq 10 permit 10.0.1.0/24 le 32
+ip prefix-list K8S-LB seq 20 permit 10.0.2.0/24 le 32
+ip prefix-list K8S-LB seq 30 permit 10.0.3.0/24 le 32
+ip prefix-list K8S-LB seq 40 permit 10.0.4.0/24 le 32

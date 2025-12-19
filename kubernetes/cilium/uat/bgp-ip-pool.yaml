@@ -5,8 +5,9 @@ metadata:
 spec:
   allowFirstLastIPs: "No"
   blocks:
-    - cidr: "10.0.3.0/24"
+    - start: "10.0.3.3"
+      stop: "10.0.3.10"
   serviceSelector:
     matchLabels:
-      service.kubernetes.io/cilium-adverstised-bgp: "true"
+      service.kubernetes.io/cilium-advertised-bgp: "true"
       env: "uat"

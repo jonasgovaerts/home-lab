@@ -26,3 +26,6 @@
           server:
             service:
               type: LoadBalancer
+              labels:
+                service.kubernetes.io/cilium-advertised-bgp: "true"
+                env: infra

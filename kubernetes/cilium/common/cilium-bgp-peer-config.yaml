@@ -3,7 +3,7 @@ kind: CiliumBGPPeerConfig
 metadata:
   name: udm-pro
 spec:
-  ebgpMultihop: 1
+  ebgpMultihop: 4
   timers:
     connectRetryTimeSeconds: 5
     holdTimeSeconds: 90

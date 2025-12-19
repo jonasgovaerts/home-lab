@@ -1,13 +1,12 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: "ip-ppool-bgp-prd"
+  name: "ip-ppool-bgp-infra"
 spec:
-  allowFirstLastIPs: "No"
   blocks:
-    - start: "10.0.2.3"
-      stop: "10.0.2.10"
+    - start: "10.0.1.3"
+      stop: "10.0.1.10"
   serviceSelector:
     matchLabels:
       service.kubernetes.io/cilium-advertised-bgp: "true"
-      env: "prd"
+      env: "infra"

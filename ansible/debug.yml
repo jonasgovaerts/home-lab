@@ -1,10 +1,12 @@
 ---
 - name: Debug Kubernetes version
-  hosts: masters,workers
+  hosts: localhost
   gather_facts: false
-  vars:
-    kubernetes_version: "1.30.3"
   tasks:
     - name: Debug variable
       ansible.builtin.debug:
-        msg: "curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version | regex_replace('^(\\d+\\.\\d+)\\..*$', '\\1') }}/deb/Release.key"
+       msg: kubeadm init \
+        --kubernetes-version={{ kubernetes_version }} \
+        --pod-network-cidr={{ pod_network_cidr }} \
+        --service-cidr={{ service_network_cidr }} \
+        --apiserver-advertise-address={{ kubevip_address }}
