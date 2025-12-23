@@ -11,7 +11,85 @@ spec:
     targetRevision: "75.15.1"
     helm:
       releaseName: kube-prometheus-stack
-      values: ""
+      values: |
+        # Enable or disable components
+        prometheus:
+          enabled: true
+          service:
+            type: ClusterIP
+            port: 9090
+        
+          # prometheusSpec:
+          #   retention: 10d
+          #   storageSpec:
+          #     volumeClaimTemplate:
+          #       spec:
+          #         storageClassName: "gp2"  # or your preferred SC
+          #         accessModes: ["ReadWriteOnce"]
+          #         resources:
+          #           requests:
+          #             storage: 8Gi
+          #   serviceMonitorSelectorNilUsesHelmValues: false
+          #   podMonitorSelectorNilUsesHelmValues: false
+        
+        alertmanager:
+          enabled: true
+          service:
+            type: ClusterIP
+          alertmanagerSpec:
+            replicas: 1
+            # storage:
+            #   volumeClaimTemplate:
+            #     spec:
+            #       storageClassName: "gp2"
+            #       accessModes: ["ReadWriteOnce"]
+            #       resources:
+            #         requests:
+            #           storage: 2Gi
+        
+        grafana:
+          enabled: true
+          adminPassword: prom-operator
+          service:
+            type: ClusterIP
+            port: 80
+            ingress:
+              enabled: true
+              pathType: ImplementationSpecific
+              hosts:
+                - grafana.jonasg.be
+              tls: []
+        
+          # Enable persistence for Grafana dashboards
+          # persistence:
+          #   enabled: true
+          #   storageClassName: "gp2"
+          #   accessModes:
+          #     - ReadWriteOnce
+          #   size: 5Gi
+        
+          # Enable Prometheus as default data source
+          datasources:
+            datasources.yaml:
+              apiVersion: 1
+              datasources:
+                - name: Prometheus
+                  type: prometheus
+                  access: proxy
+                  url: http://prometheus-operated:9090
+        
+        kubeStateMetrics:
+          enabled: true
+        
+        prometheus-node-exporter:
+          enabled: true
+        
+        prometheusOperator:
+          enabled: true
+        
+        # Disable default rules (optional; tweak per environment)
+        defaultRules:
+          create: true
   destination:
     server: https://kubernetes.default.svc
     namespace: prometheus
@@ -21,3 +99,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true

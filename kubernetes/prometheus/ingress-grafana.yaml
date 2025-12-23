@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: prometheus
+  annotations:
+    # Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # ExternalDNS
+    external-dns.alpha.kubernetes.io/hostname: grafana.homelab.jonasg.be
+    # cert-manager
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    # IMPORTANT: grafana expects HTTP
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - grafana.homelab.jonasg.be
+    secretName: grafana-tls
+  rules:
+  - host: grafana.homelab.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kube-prometheus-stack-grafana
+            port:
+              number: 80

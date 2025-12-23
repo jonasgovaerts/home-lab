@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: alertmanager
+  namespace: prometheus
+  annotations:
+    # Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # ExternalDNS
+    external-dns.alpha.kubernetes.io/hostname: alertmanager.homelab.jonasg.be
+    # cert-manager
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    # IMPORTANT: alertmanager expects HTTP
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - alertmanager.homelab.jonasg.be
+    secretName: alertmanager-tls
+  rules:
+  - host: alertmanager.homelab.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: alertmanager-operated
+            port:
+              number: 9093

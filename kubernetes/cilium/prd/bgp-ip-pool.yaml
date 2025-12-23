@@ -1,7 +1,7 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: "ip-ppool-bgp-prd"
+  name: "ip-pool-bgp-prd"
 spec:
   allowFirstLastIPs: "No"
   blocks:
