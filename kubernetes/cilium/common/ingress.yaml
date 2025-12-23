@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hubble
+  namespace: kube-system
+  annotations:
+    # Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # ExternalDNS
+    external-dns.alpha.kubernetes.io/hostname: hubble.homelab.jonasg.be
+    # cert-manager
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    # IMPORTANT: hubble expects HTTP
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - hubble.homelab.jonasg.be
+    secretName: hubble-tls
+  rules:
+  - host: hubble.homelab.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hubble-ui
+            port:
+              number: 80

@@ -12,45 +12,36 @@ spec:
     helm:
       releaseName: external-dns
       values: |
-        fullnameOverride: external-dns-unifi
-        logLevel: &logLevel debug
+        # This is a minimal configuration snippet for the webhook provider.
+        # You are responsible for configuring other external-dns values according to your needs
+        # (e.g., domainFilters, policy, interval, sources, etc.).
+        # See https://github.com/kubernetes-sigs/external-dns/tree/master/charts/external-dns for all options.
         provider:
           name: webhook
           webhook:
             image:
-              repository: ghcr.io/kashalls/external-dns-unifi-webhook
-              tag: main # replace with a versioned release tag
+              repository: ghcr.io/lexfrei/external-dns-unifios-webhook
+              tag: latest  # Recommended: pin to a specific version (e.g., v1.0.0)
             env:
-              - name: UNIFI_HOST
-                value: https://192.168.1.1 # replace with the address to your UniFi router/controller
-              - name: UNIFI_EXTERNAL_CONTROLLER
-                value: "false"
-              - name: UNIFI_API_KEY
+              - name: WEBHOOK_UNIFI_API_KEY
                 valueFrom:
                   secretKeyRef:
                     name: external-dns-unifi-secret
                     key: api-key
-              - name: LOG_LEVEL
-                value: *logLevel
+              - name: WEBHOOK_UNIFI_HOST
+                value: "https://192.168.1.1"
             livenessProbe:
               httpGet:
                 path: /healthz
-                port: http-webhook
+                port: 8080
               initialDelaySeconds: 10
-              timeoutSeconds: 5
+              periodSeconds: 10
             readinessProbe:
               httpGet:
                 path: /readyz
-                port: http-webhook
+                port: 8080
               initialDelaySeconds: 10
-              timeoutSeconds: 5
-        extraArgs:
-          - --ignore-ingress-tls-spec
-        policy: create-only
-        sources: ["ingress", "service"]
-        txtOwnerId: default
-        txtPrefix: k8s.
-        domainFilters: ["homelab.jonasg.be"] # replace with your domain      
+              periodSeconds: 10
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns

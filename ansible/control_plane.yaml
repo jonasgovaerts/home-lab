@@ -61,7 +61,9 @@
           --helm-set ipam.mode=cluster-pool \
           --helm-set ipam.operator.clusterPoolIPv4PodCIDRList={{ pod_network_cidr }} \
           --helm-set ipam.operator.clusterPoolIPv4MaskSize=24 \
-          --set bgpControlPlane.enabled=true && \
+          --set bgpControlPlane.enabled=true \
+          --set prometheus.enabled=true \
+          --set operator.prometheus.enabled=true && \
           touch /etc/kubernetes/cilium_installed
       changed_when: false
       args:
