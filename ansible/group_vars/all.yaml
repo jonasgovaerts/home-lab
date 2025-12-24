@@ -10,3 +10,7 @@ kubevip_address: "10.0.1.2"
 
 # Cilium
 cilium_version: "v1.18.5"
+
+# OIDC
+oidc_issuer_url: "https://authentik.jonasg.be/application/o/kubernetes/"
+oidc_client_id: "9c9P9jC3MJzrlBinzjHMy65b8DxY0LObR9vbomxs"

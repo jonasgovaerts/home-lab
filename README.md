@@ -38,3 +38,16 @@ This project documents a home lab setup for Kubernetes, leveraging GitOps and au
 - [Flux Documentation](https://fluxcd.io/docs/)
 - [Ansible Documentation](https://docs.ansible.com/)
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
+
+
+## OIDC Authentication with authentik
+
+To authenticate against your Kubernetes cluster using OIDC with authentik, configure `kubectl-oidc-login`:
+
+```bash
+kubectl oidc-login setup \
+  --oidc-issuer-url=<ISSUER_URL> \
+  --oidc-client-id=<CLIENT_ID> \
+  --oidc-client-secret=<CLIENET_SECRET> \
+  --oidc-extra-scope=openid,email,profile,groups,nickname
+```

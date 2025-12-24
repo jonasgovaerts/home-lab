@@ -11,6 +11,12 @@ nodeRegistration:
 ---
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
+apiServer:
+  extraArgs:
+    oidc-issuer-url: "{{ oidc_issuer_url }}"
+    oidc-client-id: "{{ oidc_client_id }}"
+    oidc-username-claim: "nickname"
+    oidc-groups-claim: "groups"
 kubernetesVersion: "{{ kubernetes_version }}"
 networking:
   podSubnet: "{{ pod_network_cidr }}"
