@@ -1,0 +1,39 @@
+# kubernetes/docuseal/docuseal-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docuseal
+  namespace: docuseal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docuseal
+  template:
+    metadata:
+      labels:
+        app: docuseal
+    spec:
+      containers:
+      - name: docuseal
+        image: docker.io/docuseal/docuseal:latest
+        ports:
+        - containerPort: 3000
+          name: webui
+        env:
+        - name: TZ
+          value: Europe/Brussels
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "2Gi"
+          requests:
+            cpu: "100m"
+            memory: "512Mi"
+        volumeMounts:
+        - mountPath: /data
+          name: docuseal-data
+      volumes:
+      - name: docuseal-data
+        persistentVolumeClaim:
+          claimName: docuseal-pvc

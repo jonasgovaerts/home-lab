@@ -1,0 +1,23 @@
+# Internal Service for Web UI and API (not exposed via LoadBalancer)
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-internal
+  namespace: adguard
+spec:
+  type: ClusterIP
+  selector:
+    app: adguard
+  ports:
+  - name: webui
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  - name: api
+    port: 8920
+    protocol: TCP
+    targetPort: 8920

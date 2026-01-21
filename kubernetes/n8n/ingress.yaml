@@ -1,0 +1,28 @@
+# ./kubernetes/n8n/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: n8n-ingress
+  namespace: n8n
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    external-dns.alpha.kubernetes.io/hostname: n8n.homelab.jonasg.be
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+spec:
+  tls:
+  - hosts:
+    - n8n.homelab.jonasg.be
+    secretName: n8n-tls
+  rules:
+  - host: n8n.homelab.jonasg.be
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: n8n-service
+            port:
+              number: 5678

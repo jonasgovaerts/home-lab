@@ -1,0 +1,16 @@
+resources:
+- namespace.yaml
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+- nfs-pv.yaml
+- nfs-pvc.yaml
+
+commonLabels:
+  app.kubernetes.io/name: open-webui
+  app.kubernetes.io/instance: open-webui
+
+images:
+- name: ghcr.io/open-webui/open-webui
+  newName: ghcr.io/open-webui/open-webui
+  newTag: main

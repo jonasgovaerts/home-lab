@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trouw-rsvp
+  namespace: trouw-rsvp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trouw-rsvp
+  template:
+    metadata:
+      labels:
+        app: trouw-rsvp
+    spec:
+      imagePullSecrets:
+      - name: ghcr-pull-secret
+      volumes:
+      - name: rsvp-data
+        persistentVolumeClaim:
+          claimName: rsvp-nfs-pvc
+      containers:
+      - name: trouw-rsvp
+        image: ghcr.io/jonasgovaerts/trouw-rsvp:latest
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - secretRef:
+            name: user
+        volumeMounts:
+        - name: rsvp-data
+          mountPath: /data
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"

@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trouw-rsvp
+  namespace: trouw-rsvp
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: rsvp.homelab.jonasg.be
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+spec:
+  tls:
+  - hosts:
+      - rsvp.homelab.jonasg.be
+      - rsvp.jonasg.be
+    secretName: rsvp-tls
+  rules:
+  - host: rsvp.homelab.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trouw-rsvp
+            port:
+              number: 5000
+  - host: rsvp.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trouw-rsvp
+            port:
+              number: 5000

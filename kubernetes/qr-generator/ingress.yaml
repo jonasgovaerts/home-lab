@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qr-generator
+  namespace: qr-generator
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: qr-generator.homelab.jonasg.be
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+spec:
+  tls:
+  - hosts:
+      - qr-generator.homelab.jonasg.be
+      - qr-generator.jonasg.be
+    secretName: qr-generator-tls
+  rules:
+  - host: qr-generator.homelab.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: qr-generator
+            port:
+              number: 5000
+  - host: qr-generator.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: qr-generator
+            port:
+              number: 5000

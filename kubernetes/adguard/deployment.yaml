@@ -1,0 +1,57 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguard
+  namespace: adguard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adguard
+  template:
+    metadata:
+      labels:
+        app: adguard
+    spec:
+      containers:
+        - name: adguard
+          image: docker.io/adguard/adguardhome:latest
+          ports:
+            - containerPort: 53
+              protocol: UDP
+              name: dns-udp
+            - containerPort: 53
+              protocol: TCP
+              name: dns-tcp
+            - containerPort: 3000
+              protocol: TCP
+              name: webui
+            - containerPort: 443
+              protocol: TCP
+              name: https
+            - containerPort: 8920
+              protocol: TCP
+              name: api
+          envFrom:
+            - configMapRef:
+                name: adguard-env
+          volumeMounts:
+            - name: config
+              mountPath: /opt/adguardhome/conf
+            - name: work
+              mountPath: /opt/adguardhome-work
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: adguard-config-pvc
+        - name: work
+          persistentVolumeClaim:
+            claimName: adguard-work-pvc

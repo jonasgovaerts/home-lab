@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qr-generator
+  namespace: qr-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qr-generator
+  template:
+    metadata:
+      labels:
+        app: qr-generator
+    spec:
+      imagePullSecrets:
+      - name: ghcr-pull-secret
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: qr-generator-nfs-pvc
+      containers:
+      - name: qr-generator
+        image: ghcr.io/jonasgovaerts/qr-generator:latest
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"

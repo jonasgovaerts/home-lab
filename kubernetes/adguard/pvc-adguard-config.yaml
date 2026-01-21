@@ -1,0 +1,12 @@
+# PersistentVolumeClaim for config
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: adguard-config-pvc
+  namespace: adguard
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

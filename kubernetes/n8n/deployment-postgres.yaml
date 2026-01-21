@@ -1,0 +1,41 @@
+# ./kubernetes/n8n/postgresql-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n-postgres
+  namespace: n8n
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: n8n-postgres
+  template:
+    metadata:
+      labels:
+        app: n8n-postgres
+    spec:
+      containers:
+      - name: postgresql
+        image: postgres:16
+        ports:
+        - containerPort: 5432
+        envFrom:
+        - secretRef:
+            name: n8n-secrets
+        volumeMounts:
+        - mountPath: /var/lib/postgresql
+          name: postgresql-storage
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+        securityContext:
+          runAsUser: 999
+          runAsGroup: 999
+      volumes:
+      - name: postgresql-storage
+        persistentVolumeClaim:
+          claimName: n8n-postgresql-pvc

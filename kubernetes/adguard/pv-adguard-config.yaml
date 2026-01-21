@@ -1,0 +1,13 @@
+# PersistentVolume for AdGuard config
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: adguard-config-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.3.100
+    path: "/mnt/user/kubernetes/adguard/config/"

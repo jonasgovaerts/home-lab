@@ -1,0 +1,8 @@
+# ConfigMap for environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adguard-env
+  namespace: adguard
+data:
+  TZ: "Europe/Brussels"

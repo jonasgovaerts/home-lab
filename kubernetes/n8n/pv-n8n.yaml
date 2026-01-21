@@ -1,0 +1,15 @@
+# ./kubernetes/n8n/pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: n8n-pv
+spec:
+  storageClassName: ""
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/user/kubernetes/n8n/data
+    server: 192.168.3.100

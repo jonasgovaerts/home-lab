@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: docuseal
+  namespace: docuseal
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: docuseal

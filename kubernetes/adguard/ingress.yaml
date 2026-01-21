@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adguard-ui
+  namespace: adguard
+  annotations:
+    # Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # ExternalDNS
+    external-dns.alpha.kubernetes.io/hostname: adguard.homelab.jonasg.be
+    # cert-manager
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+    # IMPORTANT: Argo CD expects HTTPS
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - adguard.homelab.jonasg.be
+    secretName: adguard-tls
+  rules:
+  - host: adguard.homelab.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: adguard-internal
+            port:
+              number: 3000

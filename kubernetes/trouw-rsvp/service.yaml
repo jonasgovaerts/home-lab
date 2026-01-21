@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trouw-rsvp
+  namespace: trouw-rsvp
+spec:
+  selector:
+    app: trouw-rsvp
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP
+  type: ClusterIP

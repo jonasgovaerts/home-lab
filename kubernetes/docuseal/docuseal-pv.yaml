@@ -1,0 +1,13 @@
+# PersistentVolume for Docuseal work directory
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: docuseal
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.3.100
+    path: "/mnt/user/kubernetes/docuseal/"

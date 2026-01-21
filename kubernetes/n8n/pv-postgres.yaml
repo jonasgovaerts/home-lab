@@ -1,0 +1,15 @@
+# ./kubernetes/n8n/postgresql-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: n8n-postgresql-pv
+spec:
+  storageClassName: ""
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/user/kubernetes/n8n/postgres
+    server: 192.168.3.100

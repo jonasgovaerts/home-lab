@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: photo-upload
+  namespace: photo-upload
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: photo-upload.homelab.jonasg.be
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+spec:
+  tls:
+  - hosts:
+      - photo-upload.homelab.jonasg.be
+      - photo-upload.jonasg.be
+    secretName: photo-upload-tls
+  rules:
+  - host: photo-upload.homelab.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: photo-upload
+            port:
+              number: 8000
+  - host: photo-upload.jonasg.be
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: photo-upload
+            port:
+              number: 8000

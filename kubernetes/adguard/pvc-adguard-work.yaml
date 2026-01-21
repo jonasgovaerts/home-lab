@@ -1,0 +1,12 @@
+# PersistentVolumeClaim for work directory
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: adguard-work-pvc
+  namespace: adguard
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

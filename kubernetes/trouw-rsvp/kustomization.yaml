@@ -5,3 +5,6 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - pv-nfs.yaml
+  - secret.yaml
+  - secret-user.yaml

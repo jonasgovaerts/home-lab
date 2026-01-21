@@ -1,0 +1,23 @@
+# Service (LoadBalancer)
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard
+  namespace: adguard
+  labels:
+    env: "infra"
+    service.kubernetes.io/cilium-advertised-bgp: "true"
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.0.1.5
+  selector:
+    app: adguard
+  ports:
+  - name: dns-udp
+    port: 53
+    protocol: UDP
+    targetPort: 53
+  - name: dns-tcp
+    port: 53
+    protocol: TCP
+    targetPort: 53

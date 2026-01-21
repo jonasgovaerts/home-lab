@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: photo-upload
+  namespace: photo-upload
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photo-upload
+  template:
+    metadata:
+      labels:
+        app: photo-upload
+    spec:
+      imagePullSecrets:
+      - name: ghcr-pull-secret
+      containers:
+      - name: photo-upload
+        image: ghcr.io/jonasgovaerts/photo-upload:latest
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"

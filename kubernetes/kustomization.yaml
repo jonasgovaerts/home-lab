@@ -1,0 +1,24 @@
+resources:
+- argo
+- cert-manager
+- traefik
+- cilium
+- prometheus
+- external-dns
+- kyverno
+- metrics-server
+- dashboard
+- cadvisor
+- trivy
+- open-webui
+- flaresolver
+- adguard
+- docuseal
+- jellyseerr
+- minio
+- n8n
+- photo-upload
+- prowlarr
+- qr-generator
+- trouw-rsvp
+- uptime-kuma
