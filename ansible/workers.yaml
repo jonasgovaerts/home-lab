@@ -7,6 +7,7 @@
       register: join_cmd
       delegate_to: "{{ groups['masters'][0] }}"
       run_once: true
+      failed_when: false
 
     - name: Save join command
       ansible.builtin.set_fact:
@@ -18,9 +19,17 @@
       ansible.builtin.command: "{{ kube_join_command }}"
       args:
         creates: /etc/kubernetes/kubelet.conf
+      register: join_result
+      failed_when: join_result.rc != 0 and 'already joined' not in join_result.stderr
 
     - name: Set node role to worker
       become: false
       ansible.builtin.command: >
         kubectl label node {{ ansible_hostname }} node-role.kubernetes.io/worker=worker
       delegate_to: localhost
+      args:
+        executable: /bin/bash
+      retries: 3
+      delay: 5
+      register: label_result
+      until: label_result is not failed

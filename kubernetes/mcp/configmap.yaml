@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubernetes-mcp-server-kubeconfig
+  namespace: mcp
+  labels:
+    app: kubernetes-mcp-server
+data:
+  # This is a template kubeconfig that will be used by the service account
+  # The actual values will be populated at runtime using the service account token
+  kubeconfig.yaml: |
+    apiVersion: v1
+    kind: Config
+    preferences: {}
+    clusters:
+      - cluster:
+          certificate-authority-data: ""
+          server: https://kubernetes.default.svc.cluster.local
+        name: default-cluster
+    users:
+      - name: service-account-user
+        user:
+          tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    contexts:
+      - context:
+          cluster: default-cluster
+          namespace: mcp
+          user: service-account-user
+        name: default-context
+    current-context: default-context

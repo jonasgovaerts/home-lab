@@ -7,12 +7,14 @@
       ansible.builtin.command: swapoff -a
       when: ansible_facts["swaptotal_mb"] > 0
       changed_when: false
+      failed_when: false
 
     - name: Remove swap from fstab
       ansible.builtin.replace:
         path: /etc/fstab
         regexp: '^([^#].*swap.*)$'
         replace: '# \1'
+      changed_when: false
 
     - name: Kernel modules
       ansible.builtin.copy:
@@ -28,6 +30,8 @@
       loop:
         - overlay
         - br_netfilter
+      register: modprobe_result
+      failed_when: modprobe_result is failed
 
     - name: Sysctl settings
       ansible.builtin.copy:
@@ -66,6 +70,8 @@
         sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
       args:
         creates: /etc/containerd/config.toml
+      register: containerd_config
+      failed_when: containerd_config.rc != 0
 
     - name: Restart containerd
       ansible.builtin.service:
@@ -84,6 +90,8 @@
         curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version_apt }}/deb/Release.key \
         | gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
       changed_when: false
+      register: apt_key_result
+      failed_when: apt_key_result.rc != 0
 
     - name: Add Kubernetes repo
       ansible.builtin.copy:
@@ -101,3 +109,23 @@
           - kubectl={{ kubernetes_version }}-*
         state: present
         allow_downgrade: true
+      register: k8s_install
+      failed_when: k8s_install is failed
+
+    - name: Check if kubernetes components are installed
+      ansible.builtin.command: dpkg -l | grep -E "(kubelet|kubeadm|kubectl)"
+      changed_when: false
+      register: k8s_check
+      failed_when: false
+
+    - name: Verify containerd is running
+      ansible.builtin.command: systemctl is-active containerd
+      changed_when: false
+      register: containerd_status
+      failed_when: containerd_status.rc != 0
+
+    - name: Verify kubernetes components are installed
+      ansible.builtin.command: kubelet --version
+      changed_when: false
+      register: kubelet_version
+      failed_when: kubelet_version.rc != 0

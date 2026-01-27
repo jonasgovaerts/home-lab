@@ -1,0 +1,56 @@
+---
+# Ansible Lint Configuration
+# See https://ansible-lint.readthedocs.io/en/latest/configuring.html
+
+# Enable all rules
+skip_list:
+  - 'name[template]'
+  - 'no-handler'
+  - 'unnamed-task'
+  - 'var-naming[no-valid-variable-name]'
+  - 'var-naming[no-invalid-variable-name]'
+  - 'fqcn-built-in'
+
+# Set rule severity levels
+rules:
+  # Require all tasks to have a name
+  - name: 5
+  # Require all plays to have a name
+  - play-name: 5
+  # Require all tasks to have a check mode
+  - check-mode-disabled: 5
+  # Require all tasks to have a delegate_to
+  - delegate-to: 5
+  # Require all tasks to have a when condition
+  - when: 5
+  # Require all tasks to have a register
+  - register: 5
+  # Require all tasks to have a changed_when
+  - changed-when: 5
+  # Require all tasks to have a failed_when
+  - failed-when: 5
+  # Require all tasks to have a validate
+  - validate: 5
+
+# Set the maximum number of concurrent jobs
+max_concurrent: 5
+
+# Set the timeout for tasks
+timeout: 120
+
+# Enable or disable specific rules
+enable_list:
+  - 'name[template]'
+  - 'no-handler'
+  - 'unnamed-task'
+  - 'var-naming'
+  - 'fqcn-built-in'
+
+# Set the verbosity level
+verbosity: 2
+
+# Set the output format
+output_format: 'json'
+
+# Set the cache directory
+cache_dir: '.cache/ansible-lint'
