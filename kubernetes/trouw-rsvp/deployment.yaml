@@ -18,7 +18,7 @@ spec:
       volumes:
       - name: rsvp-data
         persistentVolumeClaim:
-          claimName: rsvp-nfs-pvc
+          claimName: trouw-rsvp
       containers:
       - name: trouw-rsvp
         image: ghcr.io/jonasgovaerts/trouw-rsvp:latest

@@ -18,7 +18,7 @@ spec:
       volumes:
       - name: data-volume
         persistentVolumeClaim:
-          claimName: qr-generator-nfs-pvc
+          claimName: qr-generator
       containers:
       - name: qr-generator
         image: ghcr.io/jonasgovaerts/qr-generator:latest
