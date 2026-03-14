@@ -3,8 +3,7 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingress.yaml
-- nfs-pv.yaml
-- nfs-pvc.yaml
+- pvc.yaml
 
 commonLabels:
   app.kubernetes.io/name: open-webui

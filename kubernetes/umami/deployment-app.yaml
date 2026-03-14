@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umami-app
+  namespace: umami
+  labels:
+    app: umami-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umami-app
+  template:
+    metadata:
+      labels:
+        app: umami-app
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z umami-db 5432; do echo waiting for db; sleep 2; done;']
+      containers:
+        - name: umami
+          image: ghcr.io/umami-software/umami:latest
+          envFrom:
+            - secretRef:
+                name: umami-secrets
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /api/heartbeat
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 5

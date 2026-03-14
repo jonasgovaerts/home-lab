@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: umami-ingress
+  namespace: umami
+  annotations:
+    # Traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # ExternalDNS
+    external-dns.alpha.kubernetes.io/hostname: umami.homelab.jonasg.be
+    # cert-manager
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - umami.homelab.jonasg.be
+        - umami.jonasg.be
+      secretName: umami-tls
+  rules:
+    - host: umami.homelab.jonasg.be
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: umami-app
+                port:
+                  number: 3000
+    - host: umami.jonasg.be
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: umami-app
+                port:
+                  number: 3000

@@ -10,6 +10,4 @@ spec:
     requests:
       storage: 10Gi
   storageClassName: longhorn
-  selector:
-    matchLabels:
-      app: open-webui
+  volumeMode: Filesystem
