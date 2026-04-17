@@ -1,0 +1,139 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infrahub
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: registry.opsmill.io/opsmill/chart
+    chart: infrahub
+    targetRevision: 4.20.2
+    helm:
+      values: |
+        # Server Configuration
+        infrahubServer:
+          infrahubServer:
+            livenessProbe:
+              initialDelaySeconds: 300
+              failureThreshold: 60
+            readinessProbe:
+              initialDelaySeconds: 120
+              failureThreshold: 60
+            envFromExistingSecrets:
+              - "infrahub-secrets"
+              - "infrahub-oidc-secret"
+            env:
+              INFRAHUB_OIDC_PROVIDER1_DISCOVERY_URL: "https://authentik.jonasg.be/application/o/infrahub/.well-known/openid-configuration"
+              INFRAHUB_OIDC_PROVIDER1_DISPLAY_LABEL: "Login with Authentik"
+              INFRAHUB_SECURITY_OIDC_PROVIDERS: '["provider1"]'
+              INFRAHUB_PUBLIC_URL: "https://infrahub.jonasg.be"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "1Gi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            hostname: infrahub.jonasg.be
+            hosts:
+              - host: infrahub.jonasg.be
+                paths:
+                  - path: /
+                    pathType: Prefix
+              - host: infrahub.homelab.jonasg.be
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - secretName: infrahub-tls
+                hosts:
+                  - infrahub.jonasg.be
+              - secretName: infrahub-homelab-tls
+                hosts:
+                  - infrahub.homelab.jonasg.be
+          
+          # Initial Secrets (Using an existing K8s secret for security)
+          # envFromExistingSecret: "infrahub-secrets" # Removed/moved to correct inner scope
+        
+        # Persistence Configuration
+        neo4j:
+          enabled: true
+          neo4j:
+            resources:
+              requests:
+                cpu: "500m"
+                memory: "2Gi"
+              limits:
+                cpu: "2000m"
+                memory: "2Gi"
+          volumes:
+            data:
+              mode: dynamic
+              dynamic:
+                storageClassName: "longhorn"
+                requests:
+                  storage: 10Gi
+        
+        postgresql:
+          primary:
+            resources:
+              requests:
+                cpu: "100m"
+                memory: "256Mi"
+              limits:
+                cpu: "500m"
+                memory: "512Mi"
+
+        redis:
+          enabled: true
+          master:
+            resources:
+              requests:
+                cpu: "100m"
+                memory: "128Mi"
+              limits:
+                cpu: "250m"
+                memory: "256Mi"
+            persistence:
+              enabled: true
+              storageClass: "longhorn"
+              size: 5Gi
+        
+        rabbitmq:
+          enabled: true
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          persistence:
+            enabled: true
+            storageClass: "longhorn"
+            size: 10Gi
+            
+        infrahubTaskWorker:
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: infrahub
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

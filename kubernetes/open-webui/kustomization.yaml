@@ -5,9 +5,11 @@ resources:
 - ingress.yaml
 - pvc.yaml
 
-commonLabels:
-  app.kubernetes.io/name: open-webui
-  app.kubernetes.io/instance: open-webui
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/name: open-webui
+    app.kubernetes.io/instance: open-webui
 
 images:
 - name: ghcr.io/open-webui/open-webui

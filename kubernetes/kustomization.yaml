@@ -22,3 +22,7 @@ resources:
 - qr-generator
 - trouw-rsvp
 - uptime-kuma
+- infrahub
+- mcp
+- longhorn
+- umami

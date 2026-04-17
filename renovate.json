@@ -1,18 +1,15 @@
 {
-  "extends": ["config:base"],
-  "enabledManagers": ["regex"],
-  "regexManagers": [
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "customManagers": [
     {
-      "description": "Update Helm chart versions in Flux HelmRelease",
-      "fileMatch": ["kubernetes/.*/helm-release\\.ya?ml$"],
-      "matchStrings": [
-        "chart:\\s*\\n\\s*spec:\\s*\\n\\s*chart:\\s*(?<depName>[\\w\\-/]+)\\s*\\n\\s*version:\\s*(?<currentValue>[\\w\\.\\-]+)"
+      "customType": "regex",
+      "description": "Update image tags in argo-project.yaml or values.yaml",
+      "fileMatch": [
+        "kubernetes/.*/(argo-project|values)\\.ya?ml$"
       ],
-      "datasourceTemplate": "helm"
-    },
-    {
-      "description": "Update image tags in values.yaml or helm-release.yaml",
-      "fileMatch": ["kubernetes/.*/(helm-release|values)\\.ya?ml$"],
       "matchStrings": [
         "repository:\\s*(?<depName>[\\w\\-/\\.]+)\\s*\\n\\s*tag:\\s*(?<currentValue>[\\w\\.\\-]+)"
       ],
@@ -21,9 +18,11 @@
   ],
   "packageRules": [
     {
-      "matchManagers": ["regex"],
-      "groupName": "Flux Helm and image updates"
+      "matchManagers": [
+        "argocd",
+        "custom.regex"
+      ],
+      "groupName": "ArgoCD and image updates"
     }
   ]
 }
-
